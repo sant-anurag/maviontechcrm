@@ -1,4 +1,3 @@
-# Python standard library imports
 import csv
 import datetime
 from datetime import date, timedelta
@@ -12,7 +11,6 @@ import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
-# Django imports
 from django.conf import settings
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db import connection
@@ -20,17 +18,15 @@ from django.db.models import Q
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import redirect, render
 from django.views.decorators.csrf import csrf_exempt
-
-# Third-party imports
-from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
-from openpyxl.utils import get_column_letter
 from django.contrib import messages
 from django.urls import reverse
 from django.views.decorators.http import require_http_methods
+from django.utils.datastructures import MultiValueDictKeyError
+
 import mysql.connector
 import openpyxl
-from datetime import datetime
-from django.utils.datastructures import MultiValueDictKeyError
+from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
+from openpyxl.utils import get_column_letter
 
 # In-memory token store for demo (use DB or cache in production)
 RESET_TOKENS = {}
@@ -1521,11 +1517,15 @@ def change_password(request):
         return redirect('login')
     """View for changing user passwords"""
     # Get a database connection
+    isAdminUser = get_user_category(request.session['username'])
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
 
     # Fetch all users for the dropdown
-    cursor.execute("SELECT id, username FROM users")
+    if isAdminUser == True:
+        cursor.execute("SELECT id, username FROM users")
+    else:
+        cursor.execute("SELECT id, username FROM users WHERE username = %s", (request.session['username'],))
     users = cursor.fetchall()
 
     message = None
@@ -1557,7 +1557,7 @@ def change_password(request):
     cursor.close()
     conn.close()
     # fetch user category
-    isAdminUser = get_user_category(request.session['username'])
+
     print("User category fetched admin status:", isAdminUser)
     if isAdminUser == True:
         user_category = 'admin'
@@ -3447,10 +3447,7 @@ def check_member_by_phone(request):
     return JsonResponse({'exists': bool(members), 'members': members})
 
 # member_manage/views.py
-from django.http import HttpResponse
-import openpyxl
-from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
-from openpyxl.utils import get_column_letter
+
 
 def download_members(request):
     print("Download members view accessed")
@@ -3520,11 +3517,6 @@ def download_members(request):
     response['Content-Disposition'] = 'attachment; filename=Members.xlsx'
     wb.save(response)
     return response
-
-from django.http import HttpResponse
-import openpyxl
-from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
-from openpyxl.utils import get_column_letter
 
 def download_instructors(request):
     print("Download instructors view accessed")
@@ -3635,10 +3627,7 @@ def download_members_page(request):
         'event_attendance_count': event_attendance_count
     })
 
-import openpyxl
-from openpyxl.styles import Font, Alignment, Border, Side
-from django.http import HttpResponse
-from django.db import connection
+
 
 def _format_worksheet(ws, headers):
     # Set column widths
