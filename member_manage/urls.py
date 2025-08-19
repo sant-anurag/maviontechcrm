@@ -83,4 +83,5 @@ urlpatterns = [
     path('api/member_count/', views.api_member_count, name='api_member_count'),
     path('download/events/', views.download_events_excel, name='download_events_excel'),
     path('download/event_attendance/', views.download_event_attendance_excel, name='download_event_attendance_excel'),
+    path('profile/', views.profile_view, name='profile'),
 ]

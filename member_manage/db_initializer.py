@@ -158,6 +158,22 @@ class DBInitializer:
                 FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
             )
         ''')
+        cur.execute('''
+            CREATE TABLE IF NOT EXISTS user_registration_requests (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                name VARCHAR(255) NOT NULL,
+                username VARCHAR(150) NOT NULL,
+                email VARCHAR(255) NOT NULL,
+                age INT,
+                dob DATE,
+                associated_since YEAR,
+                updeshta_since YEAR,
+                address VARCHAR(255),
+                reason TEXT NOT NULL,
+                status VARCHAR(50) DEFAULT 'pending',
+                submitted_on TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        ''')
         conn.commit()
 
         # Import data from JSON files

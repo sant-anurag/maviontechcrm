@@ -1,0 +1,51 @@
+{% extends "home.html" %}
+            {% load static %}
+
+            {% block main_content %}
+            <link rel="stylesheet" href="{% static 'css/profile.css' %}">
+            <section class="profile-section">
+                <div class="profile-card">
+                    <div class="profile-header">
+                        <div class="profile-avatar">
+                            <i class="fas fa-user-circle"></i>
+                        </div>
+                        <div class="profile-info">
+                            <h2>{{ user.name }}</h2>
+                            <span class="profile-username">@{{ user.username }}</span>
+                            <span class="profile-status">{{ user.status|title }}</span>
+                        </div>
+                    </div>
+                    <div class="profile-details">
+                        <div class="profile-row">
+                            <div class="profile-label">Email:</div>
+                            <span class="profile-value" title="{{ user.email }}">{{ user.email }}</span>
+                        </div>
+                        <div class="profile-row">
+                            <div class="profile-label">Age:</div>
+                            <span class="profile-value">{{ user.age }}</span>
+                        </div>
+                        <div class="profile-row">
+                            <div class="profile-label">Date of Birth:</div>
+                            <span class="profile-value" title="{{ user.dob|date:'j F, Y' }}">{{ user.dob|date:"j F, Y" }}</span>
+                        </div>
+                        <div class="profile-row">
+                            <div class="profile-label">Associated Since:</div>
+                            <span class="profile-value">{{ user.associated_since }}</span>
+                        </div>
+                        <div class="profile-row">
+                            <div class="profile-label">Updeshta Since:</div>
+                            <span class="profile-value">{{ user.updeshta_since }}</span>
+                        </div>
+                        <div class="profile-row">
+                            <div class="profile-label">Address:</div>
+                            <span class="profile-value" title="{{ user.address }}">{{ user.address }}</span>
+                        </div>
+                        <div class="profile-row">
+                            <div class="profile-label">Submitted On:</div>
+                            <span class="profile-value" title="{{ user.submitted_on|date:'j F, Y H:i' }}">{{ user.submitted_on|date:"j F, Y H:i" }}</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <script src="{% static 'js/profile.js' %}"></script>
+            {% endblock %}

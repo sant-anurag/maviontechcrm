@@ -3692,3 +3692,36 @@ def download_event_attendance_excel(request):
     response['Content-Disposition'] = 'attachment; filename=Events_attendance.xlsx'
     wb.save(response)
     return response
+
+
+def get_user_profile(username):
+    print("Fetching user profile for username:", username)
+    conn = get_db_connection()
+    cur = conn.cursor(dictionary=True)
+    cur.execute("""
+        SELECT name, username, email, age, dob, associated_since, updeshta_since, address, status, submitted_on
+        FROM user_registration_requests
+        WHERE username = %s
+        ORDER BY submitted_on DESC
+        LIMIT 1
+    """, (username,))
+    user = cur.fetchone()
+    cur.close()
+    conn.close()
+    print("User profile fetched:", user)
+    return user
+
+def profile_view(request):
+    # check is user is authenticated
+    if not request.session.get('is_authenticated'):
+        return redirect('login')
+    username = request.session.get('username')
+    user = get_user_profile(username)
+    isAdminUser = get_user_category(request.session.get('username'))
+    print("User category fetched admin status:", isAdminUser)
+    if isAdminUser == True:
+        user_category = 'admin'
+    else:
+        user_category = 'standard'
+    return render(request, 'profile.html', {'user_category': user_category,
+                                            'user': user})
