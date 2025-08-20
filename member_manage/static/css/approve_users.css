@@ -1,0 +1,67 @@
+.approve-users-container {
+    background: #fff;
+    padding: 32px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    max-width: 900px;
+    margin: 40px auto;
+}
+.approve-users-container h2 {
+    margin-bottom: 24px;
+    font-size: 2rem;
+    color: #2d3a4b;
+    font-weight: 600;
+}
+.users-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 18px;
+}
+.users-table th, .users-table td {
+    padding: 12px 10px;
+    border-bottom: 1px solid #eaeaea;
+    text-align: left;
+}
+.users-table th {
+    background: #f5f8fa;
+    color: #4f8cff;
+    font-weight: 500;
+}
+.approve-btn, .reject-btn {
+    padding: 6px 16px;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    cursor: pointer;
+    margin-right: 6px;
+    transition: background 0.2s;
+}
+.approve-btn {
+    background: #4f8cff;
+    color: #fff;
+}
+.approve-btn:hover {
+    background: #357ae8;
+}
+.reject-btn {
+    background: #ff5a5f;
+    color: #fff;
+}
+.reject-btn:hover {
+    background: #d32f2f;
+}
+.pagination {
+    text-align: center;
+    margin-top: 12px;
+}
+.pagination a {
+    color: #4f8cff;
+    text-decoration: none;
+    margin: 0 8px;
+    font-weight: 500;
+}
+.pagination span {
+    color: #2d3a4b;
+    font-size: 1rem;
+    margin: 0 8px;
+}

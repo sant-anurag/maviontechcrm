@@ -84,4 +84,6 @@ urlpatterns = [
     path('download/events/', views.download_events_excel, name='download_events_excel'),
     path('download/event_attendance/', views.download_event_attendance_excel, name='download_event_attendance_excel'),
     path('profile/', views.profile_view, name='profile'),
+    path('approve_users_view/', views.approve_users_view, name='approve_users_view'),
+    path('approve_user_action/', views.approve_user_action, name='approve_user_action'),
 ]

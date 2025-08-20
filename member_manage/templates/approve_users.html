@@ -1,0 +1,48 @@
+{% extends 'home.html' %}
+{% load static %}
+
+{% block main_content %}
+<link rel="stylesheet" href="{% static 'css/approve_users.css' %}">
+<div class="approve-users-container">
+    <h2>User Registration Requests</h2>
+    <table class="users-table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Username</th>
+                <th>Email</th>
+                <th>Submitted On</th>
+                <th>Reason</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for req in page_obj %}
+            <tr id="row-{{ req.id }}">
+                <td>{{ req.name }}</td>
+                <td>{{ req.username }}</td>
+                <td>{{ req.email }}</td>
+                <td>{{ req.submitted_on|date:"Y-m-d H:i" }}</td>
+                <td>{{ req.reason|truncatechars:40 }}</td>
+                <td>
+                    <button class="approve-btn" data-id="{{ req.id }}">Approve</button>
+                    <button class="reject-btn" data-id="{{ req.id }}">Reject</button>
+                </td>
+            </tr>
+        {% empty %}
+            <tr><td colspan="6">No pending requests.</td></tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <div class="pagination">
+        {% if page_obj.has_previous %}
+            <a href="?page={{ page_obj.previous_page_number }}">&laquo; Prev</a>
+        {% endif %}
+        <span>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}">Next &raquo;</a>
+        {% endif %}
+    </div>
+</div>
+<script src="{% static 'js/approve_users.js' %}"></script>
+{% endblock %}

@@ -27,6 +27,7 @@ import mysql.connector
 import openpyxl
 from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
 from openpyxl.utils import get_column_letter
+from django.views.decorators.http import require_POST
 
 # In-memory token store for demo (use DB or cache in production)
 RESET_TOKENS = {}
@@ -47,6 +48,7 @@ def login_view(request):
     Handle user login
     """
     print("Login view accessed")
+    print("Pwd : ",hashlib.sha256('admin@123'.encode()).hexdigest())
     message = None
     db_initializer = DBInitializer(settings.DB_HOST, settings.DB_USER, settings.DB_PASSWORD, settings.DB_NAME)
     db_initializer.initialize()
@@ -677,8 +679,22 @@ def register_user(request):
                 updeshta_since = request.POST.get('updeshta_since')
                 address = request.POST.get('address')
                 reason = request.POST.get('reason')
+                status = 'pending'
                 gmail_user = 'sant.vihangam@gmail.com'
                 gmail_app_password = 'pdsexaeusfdgvqsu'
+
+                #write this data in user_registration_requests table
+                conn = get_db_connection()
+                cursor = conn.cursor()
+                cursor.execute("""
+                    INSERT INTO user_registration_requests (name, username, email, age, dob, associated_since, updeshta_since, address, reason,status)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s,%s)
+                """, (name, username, email, age, dob, associated_since, updeshta_since, address, reason,status))
+                conn.commit()
+                cursor.close()
+                conn.close()
+                print("User registration request saved successfully.")
+
                 # Send email to admin
                 from django.core.mail import send_mail
 
@@ -3725,3 +3741,68 @@ def profile_view(request):
         user_category = 'standard'
     return render(request, 'profile.html', {'user_category': user_category,
                                             'user': user})
+
+@csrf_exempt
+def approve_users_view(request):
+    print("Approve users view accessed")
+    # Check authentication
+    if not request.session.get('is_authenticated'):
+        return redirect('login')
+    # Fetch pending requests, recent first
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    cursor.execute("""
+        SELECT * FROM user_registration_requests
+        WHERE status = 'pending'
+        ORDER BY submitted_on DESC
+    """)
+    requests = cursor.fetchall()
+    cursor.close()
+    conn.close()
+    print("Requests fetched for approval:", requests)
+    # Paginate
+    paginator = Paginator(requests, 10)
+    page_number = request.GET.get('page', 1)
+    page_obj = paginator.get_page(page_number)
+    isAdminUser = get_user_category(request.session.get('username'))
+    print("User category fetched admin status:", isAdminUser)
+    if isAdminUser == True:
+        user_category = 'admin'
+    else:
+        user_category = 'standard'
+    return render(request, 'approve_users.html', {
+        'page_obj': page_obj,
+        'user_category': user_category
+    })
+
+@require_POST
+def approve_user_action(request):
+    import hashlib
+    user_id = request.POST.get('id')
+    action = request.POST.get('action')
+    if not user_id or action not in ['approve', 'reject']:
+        return JsonResponse({'success': False, 'message': 'Invalid request'})
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    # Get request details
+    cursor.execute("SELECT * FROM user_registration_requests WHERE id = %s", (user_id,))
+    req = cursor.fetchone()
+    if not req or req['status'] != 'pending':
+        cursor.close()
+        conn.close()
+        return JsonResponse({'success': False, 'message': 'Request not found'})
+    if action == 'approve':
+        # Insert into users table
+        password = 'Welcome@123'
+        hashed_pwd = hashlib.sha256(password.encode()).hexdigest()
+        cursor.execute("""
+            INSERT INTO users (username, password, email, is_admin)
+            VALUES (%s, %s, %s, 0)
+        """, (req['username'], hashed_pwd, req['email']))
+        cursor.execute("UPDATE user_registration_requests SET status = 'approved' WHERE id = %s", (user_id,))
+    else:
+        cursor.execute("UPDATE user_registration_requests SET status = 'rejected' WHERE id = %s", (user_id,))
+    conn.commit()
+    cursor.close()
+    conn.close()
+    return JsonResponse({'success': True})

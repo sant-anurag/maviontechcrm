@@ -51,12 +51,12 @@ class DBInitializer:
             )
         ''')
         cur.execute('''
-            INSERT INTO instructors (name, is_active)
-            SELECT %s, %s FROM DUAL
+            INSERT INTO instructors (name, number, is_active)
+            SELECT %s, %s, %s FROM DUAL
             WHERE NOT EXISTS (
                 SELECT 1 FROM instructors WHERE name = %s
             )
-        ''', ('Sadguru Deo', 1, 'Sadguru Deo'))
+        ''', ('Sadguru Deo', '1111111', 1, 'Sadguru Deo'))
         cur.execute('''
                 CREATE TABLE IF NOT EXISTS event_registrations (
                     id INT AUTO_INCREMENT PRIMARY KEY,
