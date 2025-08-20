@@ -68,7 +68,7 @@
             <ul class="submenu">
                 <li><a href="{% url 'change_password' %}"><i class="fas fa-key"></i>Change Password</a></li>
                 {% if user_category == 'admin' %}
-                    <li><a href="{% url 'create_user' %}"><i class="fas fa-user-plus"></i>Create User</a></li>
+                    <li><a href="{% url 'create_user' %}"><i class="fas fa-user-plus"></i>Manage User</a></li>
                     <li><a href="{% url 'download_members_page' %}"><i class="fas fa-download"></i>Download</a></li>
                     <li><a href="{% url 'approve_users_view' %}"><i class="fas fa-user-check"></i>Approve Users</a></li>
                 {% endif %}
