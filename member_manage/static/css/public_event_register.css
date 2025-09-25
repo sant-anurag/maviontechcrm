@@ -25,33 +25,69 @@ body{
   margin: 0 auto;
 }
 
-/* Header */
+/* Header: centered and refined (stronger presence) */
 .site-header{
   background: linear-gradient(90deg, rgba(37,99,235,0.98), rgba(30,64,175,0.98));
   color:#fff;
-  padding:18px 0;
-  box-shadow: 0 6px 18px rgba(16,24,40,0.06);
+  padding:14px 0 16px;               /* reduced top/bottom to remove excess blank space */
+  box-shadow: 0 10px 40px rgba(16,24,40,0.08);  /* slightly stronger shadow for depth */
+  border-bottom: 1px solid rgba(255,255,255,0.03);
 }
-.header-grid{
+
+/* central wrapper keeps content nicely centered with wider spacing */
+.header-center{
+  display:flex;
+  justify-content:center;   /* center horizontally */
+  align-items:center;
+  gap:18px;
+  padding:8px 0;
+  min-height:84px;         /* ensures header has presence */
+}
+
+/* Brand block: larger and bolder */
+.brand{
   display:flex;
   align-items:center;
-  justify-content:space-between;
+  gap:18px;
 }
-.brand{ display:flex; align-items:center; gap:14px; }
+
+/* badge container (slightly bigger, with soft glow) */
+.brand-badge{
+  background: linear-gradient(180deg,#fff, #f3f6ff);
+  padding:8px;
+  border-radius:16px;
+  box-shadow: 0 14px 40px rgba(2,6,23,0.08);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  transform: translateY(-4px); /* small lift for visual interest */
+}
+
+/* logo sizes tuned for desktop */
 .brand-logo{
-  width:64px; height:64px; object-fit:cover; border-radius:10px;
-  border:2px solid rgba(255,255,255,0.18);
+  width:88px; height:88px; object-fit:cover; border-radius:14px;
+  border:3px solid rgba(255,255,255,0.16);
   background:#fff;
-  box-shadow: 0 6px 16px rgba(14,42,80,0.13);
 }
-.brand-text .event-name{ font-weight:700; font-size:1.05rem; line-height:1; }
-.brand-text .event-location{ font-size:0.85rem; opacity:0.92; margin-top:2px; }
 
-/* tagline */
-.header-right .tagline{ font-size:0.9rem; opacity:0.95; background: rgba(255,255,255,0.08); padding:6px 10px; border-radius:8px; }
+/* text block — bigger, bolder and more prominent */
+.brand-text{
+  text-align:left;
+  line-height:1;
+}
+.brand-text .event-name{
+  font-weight:900;
+  font-size:1.35rem;      /* increased */
+  letter-spacing:0.3px;
+}
+.brand-text .event-location{
+  font-size:1rem;
+  opacity:0.95;
+  margin-top:2px;
+}
 
-/* Main card layout */
-.page { padding: 34px 0 56px; }
+/* Main content */
+.page { padding: 28px 0 56px; } /* slightly reduce top padding so header and content feel closer */
 
 /* Layout: visual column + form card */
 .card-layout{
@@ -90,14 +126,15 @@ body{
   gap:16px;
   background: #fff;
   border-radius:12px;
-  padding:16px 18px;
+  padding:14px 18px;
   box-shadow: 0 8px 30px rgba(16,24,40,0.06);
   border: 1px solid rgba(15,23,42,0.03);
 }
 .meta{ display:flex; align-items:center; gap:12px; }
 .meta-icon{
-  width:44px; height:44px; border-radius:10px; background:linear-gradient(180deg,#2563eb,#1e40af);
-  color:#fff; display:flex; align-items:center; justify-content:center; font-size:20px;
+  width:44px; height:44px; border-radius:10px; display:flex; align-items:center; justify-content:center;
+  background: linear-gradient(180deg,#2563eb,#1e40af);
+  color:#fff;
   box-shadow: 0 8px 18px rgba(37,99,235,0.12);
 }
 .meta-title{ font-weight:700; font-size:1.02rem; color:#07214a; }
@@ -130,9 +167,18 @@ body{
   border:3px solid #fff;
 }
 
-/* flash message */
-.flash{ padding:10px 12px; border-radius:8px; margin:12px 0; font-weight:600; color:#064e3b; background:#ecfdf5; }
-.flash.error{ background:#fff1f2; color:#7f1d1d; }
+/* flash messages styling */
+#flash-container:focus { outline: 3px solid var(--accent); outline-offset: 6px; }
+.flash{
+  padding: 12px 14px;
+  border-radius: 8px;
+  margin: 12px 0;
+  font-weight: 600;
+  font-size: 0.95rem;
+  box-shadow: 0 4px 12px rgba(16,24,40,0.06);
+}
+.flash.success { background:#ecfdf5; color:#065f46; border:1px solid #a7f3d0; }
+.flash.error   { background:#fff1f2; color:#991b1b; border:1px solid #fecdd3; }
 
 /* form basics */
 .reg-form label{
@@ -196,6 +242,7 @@ body{
 
 /* primary CTA */
 .btn{ padding:10px 18px; border-radius:10px; font-weight:700; cursor:pointer; border:none; background:#f3f4f6; }
+.btn.small{ padding:8px 12px; font-size:0.95rem; }
 .btn.primary{
   background: linear-gradient(180deg,var(--accent), var(--accent-2));
   color:#fff;
@@ -212,23 +259,38 @@ body{
 .card-footer{ margin-top:18px; color:#9ca3af; font-size:0.86rem; text-align:center; }
 
 /* Responsive behaviour */
-@media (max-width:1100px){
-  .card-layout{ grid-template-columns: 1fr 420px; gap:18px; }
-  .hero-image{ height:360px; }
+
+/* Laptop wide */
+@media (max-width:1200px){
+  .brand-logo{ width:76px; height:76px; }
+  .brand-text .event-name{ font-size:1.18rem; }
+  .header-center{ min-height:74px; }
+  .hero-image{ height:380px; }
 }
+
+/* Tablet */
 @media (max-width:980px){
   .card-layout{ grid-template-columns: 1fr; }
-  .hero-image{ height:300px; }
+  .hero-image{ height:320px; }
   .visual-col{ order:2; }
   .registration-card{ order:1; }
   .row.two-col{ grid-template-columns: 1fr; }
   .row.align-center{ flex-direction:column; align-items:stretch; gap:10px; }
+  .header-center{ padding:10px 0; min-height:84px; }
+  .brand-logo{ width:72px; height:72px; }
+  .brand-text .event-name{ font-size:1.12rem; }
+  .brand-text .event-location{ font-size:0.96rem; }
 }
+
+/* Mobile */
 @media (max-width:520px){
-  .brand-logo{ width:48px; height:48px; }
-  .brand-text .event-name{ font-size:0.98rem; }
-  .registration-card{ padding:16px; border-radius:10px; }
-  .card-title{ font-size:1rem; }
-  .card-sub{ font-size:0.86rem; }
+  .brand-logo{ width:56px; height:56px; }
+  .brand-badge{ padding:6px; border-radius:12px; transform:none; box-shadow: 0 6px 18px rgba(2,6,23,0.06); }
+  .brand-text .event-name{ font-size:1rem; }
+  .brand-text .event-location{ font-size:0.82rem; }
+  .header-center{ min-height:64px; padding:8px 0; }
+  .page { padding-top:18px; }
+  .hero-image{ height:260px; }
+  .registration-card{ padding:16px; }
   .btn{ width:100%; display:inline-block; text-align:center; }
 }

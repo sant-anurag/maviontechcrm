@@ -8,19 +8,18 @@
   <link rel="stylesheet" href="{% static 'css/public_event_register.css' %}">
 </head>
 <body>
+  <!-- Header: centered and refined (updated for stronger presence) -->
   <header class="site-header">
-    <div class="container header-grid">
+    <div class="container header-center">
       <div class="brand">
-        <img src="{% static 'images/a.jpg' %}" alt="Vihangam Yoga logo" class="brand-logo">
+        <div class="brand-badge">
+          <img src="{% static 'images/a.jpg' %}" alt="Vihangam Yoga logo" class="brand-logo">
+        </div>
         <div class="brand-text">
           <div class="event-name">Swarved Sankalp Yatra</div>
           <div class="event-location">Pune</div>
         </div>
       </div>
-
-      <nav class="header-right">
-        <span class="tagline">Join a free session • Limited seats</span>
-      </nav>
     </div>
   </header>
 
@@ -29,15 +28,19 @@
 
       <!-- LEFT: hero image + floating caption card BELOW (Option B) -->
       <div class="visual-col">
-        <div class="hero-card">
+        <div class="hero-card" aria-hidden="true">
           <img src="{% static 'images/invite.jpeg' %}" alt="Event invite" class="hero-image">
         </div>
 
-        <!-- floating info card below the image (does NOT overlap image) -->
-        <div class="hero-info">
+        <!-- floating info card below the image (does NOT overlap the image) -->
+        <div class="hero-info" role="region" aria-label="Event summary">
           <div class="hero-info-left">
             <div class="meta">
-              <span class="meta-icon">📅</span>
+              <div class="meta-icon" aria-hidden="true">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false">
+                  <path d="M7 11h10M7 15h6" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </div>
               <div>
                 <div class="meta-title">Swarved Sankalp Yatra</div>
                 <div class="meta-sub">Pune — Join us for an inspiring session</div>
@@ -59,12 +62,17 @@
             <p class="card-sub">Fill basic details — registration is quick and secure.</p>
           </div>
           <div class="logo-badge">
-            <img src="{% static 'images/a.jpg' %}" alt="" />
+            <img src="{% static 'images/a.jpg' %}" alt="logo" />
           </div>
         </div>
 
-        {% if message %}
-          <div class="flash {{ message_type }}">{{ message }}</div>
+        <!-- Django messages: PRG will populate these -->
+        {% if messages %}
+          <div id="flash-container">
+            {% for msg in messages %}
+              <div class="flash {% if msg.tags %}{{ msg.tags }}{% endif %}">{{ msg }}</div>
+            {% endfor %}
+          </div>
         {% endif %}
 
         <form method="post" action="{% url 'public_event_register' %}" class="reg-form" novalidate>
@@ -74,7 +82,7 @@
           <select name="event_id" id="event_id" required>
             <option value="">-- Select Event --</option>
             {% for event in events %}
-              <option value="{{ event.id }}">{{ event.event_name }}</option>
+              <option value="{{ event.id }}" {% if request.POST.event_id == event.id|stringformat:"s" %}selected{% endif %}>{{ event.event_name }}</option>
             {% endfor %}
           </select>
 
@@ -115,7 +123,7 @@
               <span class="checkbox-label">I am a new member</span>
             </label>
 
-            <button type="submit" class="btn primary">Register</button>
+            <button type="submit" class="btn primary" id="submitBtn">Register</button>
           </div>
 
           <div class="small-note">
@@ -124,10 +132,12 @@
         </form>
 
         <footer class="card-footer">
-          &copy; {{ year|default:2024 }} Vihangam Yoga. All rights reserved.
+          &copy; {{ year|default:2025 }} Vihangam Yoga Pune. All rights reserved.
         </footer>
       </section>
     </section>
   </main>
+
+  <script src="{% static 'js/public_event_register.js' %}"></script>
 </body>
 </html>
