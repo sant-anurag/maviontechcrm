@@ -3846,7 +3846,7 @@ def public_event_register(request):
     # GET — preload events
     conn = get_db_conn()
     cur = conn.cursor(dictionary=True)
-    cur.execute("SELECT id, event_name FROM event_registrations ORDER BY event_date DESC LIMIT 10")
+    cur.execute("SELECT id, event_name FROM event_registrations ORDER BY event_date DESC LIMIT 1")
     events = cur.fetchall()
     cur.close()
     conn.close()
