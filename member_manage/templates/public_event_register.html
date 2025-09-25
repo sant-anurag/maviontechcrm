@@ -80,7 +80,6 @@
 
           <label for="event_id">Select Event</label>
           <select name="event_id" id="event_id" required>
-            <option value="">-- Select Event --</option>
             {% for event in events %}
               <option value="{{ event.id }}" {% if request.POST.event_id == event.id|stringformat:"s" %}selected{% endif %}>{{ event.event_name }}</option>
             {% endfor %}
