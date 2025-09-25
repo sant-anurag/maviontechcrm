@@ -86,4 +86,6 @@ urlpatterns = [
     path('profile/', views.profile_view, name='profile'),
     path('approve_users_view/', views.approve_users_view, name='approve_users_view'),
     path('approve_user_action/', views.approve_user_action, name='approve_user_action'),
+    # Add this to urlpatterns
+    path('public_event_register/', views.public_event_register, name='public_event_register'),
 ]

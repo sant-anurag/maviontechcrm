@@ -19,6 +19,7 @@ class SessionTimeoutMiddleware:
             reverse('ajax_states'),
             reverse('ajax_cities'),
             reverse('check_member_by_phone'),
+            reverse('public_event_register'),
             '/',
         ]
         # Allow all reset-password links (with or without token)

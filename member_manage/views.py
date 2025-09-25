@@ -3806,3 +3806,63 @@ def approve_user_action(request):
     cursor.close()
     conn.close()
     return JsonResponse({'success': True})
+
+from django.shortcuts import render
+from django.views.decorators.csrf import csrf_exempt
+# keep JsonResponse import if you still need it elsewhere, but not used below
+# from django.http import JsonResponse
+
+@csrf_exempt   # keep if you need it for now; ideally switch to proper CSRF flow in production
+def public_event_register(request):
+    message = None
+    message_type = None  # 'success' or 'error'
+
+    if request.method == 'POST':
+        name = request.POST.get('name', '').strip()
+        age = request.POST.get('age', '').strip()
+        gender = request.POST.get('gender', '').strip()
+        contact = request.POST.get('contact', '').strip()
+        address = request.POST.get('address', '').strip()
+        is_new_member = request.POST.get('is_new_member', 'off') == 'on'
+        event_id = request.POST.get('event_id', '').strip()
+
+        # Basic validation
+        if not name or not age or not gender or not contact or not event_id:
+            message = 'All fields except address are required.'
+            message_type = 'error'
+        else:
+            try:
+                conn = get_db_conn()
+                cur = conn.cursor()
+                cur.execute("""
+                    INSERT INTO event_attendance (event_id, member_name, age, contact_number, gender, address, is_new_member)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s)
+                """, (event_id, name, age, contact, gender, address, int(is_new_member)))
+                conn.commit()
+                cur.close()
+                conn.close()
+                message = 'Registration successful!'
+                message_type = 'success'
+            except Exception as e:
+                # log the exception to your logs in real app
+                message = 'Something went wrong while saving registration. Please try again.'
+                message_type = 'error'
+
+    # Load events for GET and also for re-render after POST
+    try:
+        conn = get_db_conn()
+        cur = conn.cursor(dictionary=True)
+        cur.execute("SELECT id, event_name FROM event_registrations ORDER BY event_date DESC LIMIT 10")
+        events = cur.fetchall()
+        cur.close()
+        conn.close()
+    except Exception:
+        events = []
+
+    context = {
+        'events': events,
+        'message': message,
+        'message_type': message_type,
+        'year': 2024
+    }
+    return render(request, 'public_event_register.html', context)

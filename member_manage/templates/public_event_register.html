@@ -1,0 +1,133 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Public Event Registration | Vihangam Yoga</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="stylesheet" href="{% static 'css/public_event_register.css' %}">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-grid">
+      <div class="brand">
+        <img src="{% static 'images/a.jpg' %}" alt="Vihangam Yoga logo" class="brand-logo">
+        <div class="brand-text">
+          <div class="event-name">Swarved Sankalp Yatra</div>
+          <div class="event-location">Pune</div>
+        </div>
+      </div>
+
+      <nav class="header-right">
+        <span class="tagline">Join a free session • Limited seats</span>
+      </nav>
+    </div>
+  </header>
+
+  <main class="page container">
+    <section class="card-layout">
+
+      <!-- LEFT: hero image + floating caption card BELOW (Option B) -->
+      <div class="visual-col">
+        <div class="hero-card">
+          <img src="{% static 'images/invite.jpeg' %}" alt="Event invite" class="hero-image">
+        </div>
+
+        <!-- floating info card below the image (does NOT overlap image) -->
+        <div class="hero-info">
+          <div class="hero-info-left">
+            <div class="meta">
+              <span class="meta-icon">📅</span>
+              <div>
+                <div class="meta-title">Swarved Sankalp Yatra</div>
+                <div class="meta-sub">Pune — Join us for an inspiring session</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="hero-info-right">
+            <a href="#form" class="btn small primary">Register Now</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: registration card -->
+      <section class="registration-card" id="form" aria-labelledby="form-title">
+        <div class="card-header">
+          <div>
+            <h1 id="form-title" class="card-title">Register for the event</h1>
+            <p class="card-sub">Fill basic details — registration is quick and secure.</p>
+          </div>
+          <div class="logo-badge">
+            <img src="{% static 'images/a.jpg' %}" alt="" />
+          </div>
+        </div>
+
+        {% if message %}
+          <div class="flash {{ message_type }}">{{ message }}</div>
+        {% endif %}
+
+        <form method="post" action="{% url 'public_event_register' %}" class="reg-form" novalidate>
+          {% csrf_token %}
+
+          <label for="event_id">Select Event</label>
+          <select name="event_id" id="event_id" required>
+            <option value="">-- Select Event --</option>
+            {% for event in events %}
+              <option value="{{ event.id }}">{{ event.event_name }}</option>
+            {% endfor %}
+          </select>
+
+          <div class="row two-col">
+            <div>
+              <label for="name">Full name</label>
+              <input type="text" name="name" id="name" maxlength="100" required placeholder="Your full name" value="{{ request.POST.name|default:'' }}">
+            </div>
+            <div>
+              <label for="age">Age</label>
+              <input type="number" name="age" id="age" min="1" max="120" required placeholder="Your age" value="{{ request.POST.age|default:'' }}">
+            </div>
+          </div>
+
+          <div class="row two-col">
+            <div>
+              <label for="gender">Gender</label>
+              <select name="gender" id="gender" required>
+                <option value="">-- Select Gender --</option>
+                <option value="Male" {% if request.POST.gender == 'Male' %}selected{% endif %}>Male</option>
+                <option value="Female" {% if request.POST.gender == 'Female' %}selected{% endif %}>Female</option>
+                <option value="Other" {% if request.POST.gender == 'Other' %}selected{% endif %}>Other</option>
+              </select>
+            </div>
+            <div>
+              <label for="contact">Contact Number</label>
+              <input type="tel" name="contact" id="contact" maxlength="15" required placeholder="Mobile number" value="{{ request.POST.contact|default:'' }}">
+            </div>
+          </div>
+
+          <label for="address">Address</label>
+          <textarea name="address" id="address" rows="3" placeholder="Your address (optional)">{{ request.POST.address|default:'' }}</textarea>
+
+          <div class="row align-center">
+            <label class="checkbox">
+              <input type="checkbox" name="is_new_member" id="is_new_member" {% if request.POST.is_new_member == 'on' %}checked{% endif %}>
+              <span class="checkbox-custom" aria-hidden="true"></span>
+              <span class="checkbox-label">I am a new member</span>
+            </label>
+
+            <button type="submit" class="btn primary">Register</button>
+          </div>
+
+          <div class="small-note">
+            By registering you agree to receive updates. We respect your privacy.
+          </div>
+        </form>
+
+        <footer class="card-footer">
+          &copy; {{ year|default:2024 }} Vihangam Yoga. All rights reserved.
+        </footer>
+      </section>
+    </section>
+  </main>
+</body>
+</html>
