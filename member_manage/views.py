@@ -3838,6 +3838,13 @@ def public_event_register(request):
             conn.commit()
             cur.close()
             conn.close()
+            # increase attendance count in event_registrations
+            conn = get_db_conn()
+            cur = conn.cursor()
+            cur.execute("UPDATE event_registrations SET total_attendance = total_attendance + 1 WHERE id = %s", (event_id,))
+            conn.commit()
+            cur.close()
+            conn.close()
             messages.success(request, "Registration successful!")
         except Exception as e:
             messages.error(request, "Something went wrong while saving registration. Please try again.")
