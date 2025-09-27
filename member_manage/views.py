@@ -3845,6 +3845,48 @@ def public_event_register(request):
             conn.commit()
             cur.close()
             conn.close()
+
+            #register member in the member table is the member is marked as new member
+            if is_new_member:
+                # fetch the city , country, state from the event
+
+                conn = get_db_conn()
+                cur = conn.cursor()
+                cur.execute("SELECT country, state, district ,instructor_id, event_date,FROM event_registrations WHERE id = %s", (event_id,))
+                event_location = cur.fetchone()
+                cur.close()
+                conn.close()
+                event_loc = cur.fetchone()
+                country = event_loc[0] if event_loc else None
+                state = event_loc[1] if event_loc else None
+                district = event_loc[2] if event_loc else None
+                instructor_id = event_loc[3] if event_loc else None
+                event_date = event_loc[4] if event_loc else None
+
+                print("Event location fetched:", event_loc)
+
+                # Insert into member table
+                cur.execute("""
+                        INSERT INTO members
+                        (name, age, gender, address, state, district, country, event_id, date_of_initiation, number,instructor_id)
+                        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s,%s)
+                    """, (
+                    name,  # name
+                    age,  # age as string
+                    gender,  # gender
+                    address or "",  # address
+                    state,
+                    district,
+                    country,
+                    event_id,
+                    event_date,  # attended_on as date_of_initiation
+                    contact or "",  # contact number
+                    instructor_id
+                ))
+                conn.commit()
+                cur.close()
+                conn.close()
+
             messages.success(request, "Registration successful!")
         except Exception as e:
             messages.error(request, "Something went wrong while saving registration. Please try again.")
