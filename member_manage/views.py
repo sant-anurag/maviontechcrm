@@ -3907,8 +3907,19 @@ def public_event_register(request):
     cur = conn.cursor(dictionary=True)
     cur.execute("SELECT id, event_name FROM event_registrations ORDER BY event_date DESC LIMIT 1")
     events = cur.fetchall()
+
+    # total registered
+    cur.execute("SELECT COUNT(*) AS total FROM event_attendance where event_id = %s", (events[0]['id'],))
+    total_members = cur.fetchone()["total"]
+    print("Total members registered for event_id", events[0]['id'], ":", total_members)
+
+    # total new members
+    cur.execute("SELECT COUNT(*) AS total_new FROM event_attendance WHERE is_new_member = 1 and event_id = %s", (events[0]['id'],))
+    total_new_members = cur.fetchone()["total_new"]
+
     cur.close()
     conn.close()
     print("Events loaded for form:", events)
+    # count of total members registered against this event  and count of total new members registered against this event
 
-    return render(request, 'public_event_register.html', {'events': events, 'year': 2024})
+    return render(request, 'public_event_register.html', {'events': events, 'year': 2024,'total_members': total_members,'total_new_members': total_new_members})

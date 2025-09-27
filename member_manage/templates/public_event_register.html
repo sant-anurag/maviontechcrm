@@ -8,7 +8,7 @@
   <link rel="stylesheet" href="{% static 'css/public_event_register.css' %}">
 </head>
 <body>
-  <!-- Header: centered and refined (updated for stronger presence) -->
+  <!-- Header -->
   <header class="site-header">
     <div class="container header-center">
       <div class="brand">
@@ -16,7 +16,7 @@
           <img src="{% static 'images/a.jpg' %}" alt="Vihangam Yoga logo" class="brand-logo">
         </div>
         <div class="brand-text">
-          <div class="event-name">Swarved Sandesh Yatra</div>
+          <div class="event-name">Swarved Sankalp Yatra</div>
           <div class="event-location">Pune</div>
         </div>
       </div>
@@ -26,30 +26,36 @@
   <main class="page container">
     <section class="card-layout">
 
-      <!-- LEFT: hero image + floating caption card BELOW (Option B) -->
+      <!-- LEFT: hero image + floating caption card BELOW -->
       <div class="visual-col">
         <div class="hero-card" aria-hidden="true">
           <img src="{% static 'images/invite.jpeg' %}" alt="Event invite" class="hero-image">
         </div>
 
-        <!-- floating info card below the image (does NOT overlap the image) -->
         <div class="hero-info" role="region" aria-label="Event summary">
           <div class="hero-info-left">
             <div class="meta">
-              <div class="meta-icon" aria-hidden="true">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false">
-                  <path d="M7 11h10M7 15h6" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-              </div>
+              <div class="meta-icon" aria-hidden="true">📅</div>
               <div>
-                <div class="meta-title">Swarved Sandesh Yatra</div>
+                <div class="meta-title">Swarved Sankalp Yatra</div>
                 <div class="meta-sub">Pune — Join us for an inspiring session</div>
               </div>
             </div>
           </div>
-
           <div class="hero-info-right">
             <a href="#form" class="btn small primary">Register Now</a>
+          </div>
+        </div>
+
+        <!-- ✅ Stats row -->
+        <div class="stats-row">
+          <div class="stat-card">
+            <div class="stat-value">{{ total_members }}</div>
+            <div class="stat-label">Total Members Registered</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value">{{ total_new_members }}</div>
+            <div class="stat-label">New Members Registered</div>
           </div>
         </div>
       </div>
@@ -66,7 +72,6 @@
           </div>
         </div>
 
-        <!-- Django messages: PRG will populate these -->
         {% if messages %}
           <div id="flash-container">
             {% for msg in messages %}
@@ -81,18 +86,18 @@
           <label for="event_id">Select Event</label>
           <select name="event_id" id="event_id" required>
             {% for event in events %}
-              <option value="{{ event.id }}" {% if request.POST.event_id == event.id|stringformat:"s" %}selected{% endif %}>{{ event.event_name }}</option>
+              <option value="{{ event.id }}">{{ event.event_name }}</option>
             {% endfor %}
           </select>
 
           <div class="row two-col">
             <div>
               <label for="name">Full name</label>
-              <input type="text" name="name" id="name" maxlength="100" required placeholder="Your full name" value="{{ request.POST.name|default:'' }}">
+              <input type="text" name="name" id="name" maxlength="100" required placeholder="Your full name">
             </div>
             <div>
               <label for="age">Age</label>
-              <input type="number" name="age" id="age" min="1" max="120" required placeholder="Your age" value="{{ request.POST.age|default:'' }}">
+              <input type="number" name="age" id="age" min="1" max="120" required placeholder="Your age">
             </div>
           </div>
 
@@ -101,27 +106,26 @@
               <label for="gender">Gender</label>
               <select name="gender" id="gender" required>
                 <option value="">-- Select Gender --</option>
-                <option value="Male" {% if request.POST.gender == 'Male' %}selected{% endif %}>Male</option>
-                <option value="Female" {% if request.POST.gender == 'Female' %}selected{% endif %}>Female</option>
-                <option value="Other" {% if request.POST.gender == 'Other' %}selected{% endif %}>Other</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Other">Other</option>
               </select>
             </div>
             <div>
               <label for="contact">Contact Number</label>
-              <input type="tel" name="contact" id="contact" maxlength="15" required placeholder="Mobile number" value="{{ request.POST.contact|default:'' }}">
+              <input type="tel" name="contact" id="contact" maxlength="15" required placeholder="Mobile number">
             </div>
           </div>
 
           <label for="address">Address</label>
-          <textarea name="address" id="address" rows="3" placeholder="Your address (optional)">{{ request.POST.address|default:'' }}</textarea>
+          <textarea name="address" id="address" rows="3" placeholder="Your address (optional)"></textarea>
 
           <div class="row align-center">
             <label class="checkbox">
-              <input type="checkbox" name="is_new_member" id="is_new_member" {% if request.POST.is_new_member == 'on' %}checked{% endif %}>
+              <input type="checkbox" name="is_new_member" id="is_new_member">
               <span class="checkbox-custom" aria-hidden="true"></span>
               <span class="checkbox-label">I am a new member</span>
             </label>
-
             <button type="submit" class="btn primary" id="submitBtn">Register</button>
           </div>
 
@@ -131,7 +135,7 @@
         </form>
 
         <footer class="card-footer">
-          &copy; {{ year|default:2025 }} Vihangam Yoga Pune. All rights reserved.
+          &copy; {{ year|default:2025 }} Vihangam Yoga. All rights reserved.
         </footer>
       </section>
     </section>
