@@ -3812,8 +3812,8 @@ from django.views.decorators.csrf import csrf_exempt
 # keep JsonResponse import if you still need it elsewhere, but not used below
 # from django.http import JsonResponse
 
-@csrf_exempt  # remove this in production if you use {% csrf_token %}
 def public_event_register(request):
+    print("public_event_register called. Method:", request.method)
     if request.method == 'POST':
         name = request.POST.get('name', '').strip()
         age = request.POST.get('age', '').strip()
@@ -3823,11 +3823,15 @@ def public_event_register(request):
         is_new_member = request.POST.get('is_new_member', 'off') == 'on'
         event_id = request.POST.get('event_id', '').strip()
 
+        print(f"POST data - name: {name}, age: {age}, gender: {gender}, contact: {contact}, address: {address}, is_new_member: {is_new_member}, event_id: {event_id}")
+
         if not name or not age or not gender or not contact or not event_id:
+            print("Validation failed: missing required fields")
             messages.error(request, "All fields except address are required.")
             return redirect('public_event_register')
 
         try:
+            print("Inserting into event_attendance table...")
             conn = get_db_conn()
             cur = conn.cursor()
             cur.execute("""
@@ -3838,66 +3842,73 @@ def public_event_register(request):
             conn.commit()
             cur.close()
             conn.close()
-            # increase attendance count in event_registrations
+            print("Inserted into event_attendance successfully.")
+
+            print("Updating total_attendance in event_registrations...")
             conn = get_db_conn()
             cur = conn.cursor()
             cur.execute("UPDATE event_registrations SET total_attendance = total_attendance + 1 WHERE id = %s", (event_id,))
             conn.commit()
             cur.close()
             conn.close()
+            print("Updated total_attendance successfully.")
 
-            #register member in the member table is the member is marked as new member
             if is_new_member:
-                # fetch the city , country, state from the event
-
+                print("is_new_member is True, fetching event location details...")
                 conn = get_db_conn()
                 cur = conn.cursor()
-                cur.execute("SELECT country, state, district ,instructor_id, event_date,FROM event_registrations WHERE id = %s", (event_id,))
-                event_location = cur.fetchone()
-                cur.close()
-                conn.close()
+                cur.execute("SELECT country, state, district, instructor_id, event_date FROM event_registrations WHERE id = %s", (event_id,))
                 event_loc = cur.fetchone()
-                country = event_loc[0] if event_loc else None
-                state = event_loc[1] if event_loc else None
-                district = event_loc[2] if event_loc else None
-                instructor_id = event_loc[3] if event_loc else None
-                event_date = event_loc[4] if event_loc else None
-
-                print("Event location fetched:", event_loc)
-
-                # Insert into member table
-                cur.execute("""
-                        INSERT INTO members
-                        (name, age, gender, address, state, district, country, event_id, date_of_initiation, number,instructor_id)
-                        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s,%s)
-                    """, (
-                    name,  # name
-                    age,  # age as string
-                    gender,  # gender
-                    address or "",  # address
-                    state,
-                    district,
-                    country,
-                    event_id,
-                    event_date,  # attended_on as date_of_initiation
-                    contact or "",  # contact number
-                    instructor_id
-                ))
-                conn.commit()
                 cur.close()
                 conn.close()
+                print("Event location fetched:", event_loc)
+                if event_loc:
+                    country = event_loc[0]
+                    state = event_loc[1]
+                    district = event_loc[2]
+                    instructor_id = event_loc[3]
+                    event_date = event_loc[4]
+                    print(f"Preparing to insert new member: country={country}, state={state}, district={district}, instructor_id={instructor_id}, event_date={event_date}")
+                    conn = get_db_conn()
+                    cur = conn.cursor()
+                    cur.execute("""
+                        INSERT INTO members
+                        (name, age, gender, address, state, district, country, event_id, date_of_initiation, number, instructor_id)
+                        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                    """, (
+                        name,
+                        age,
+                        gender,
+                        address or "",
+                        state,
+                        district,
+                        country,
+                        event_id,
+                        event_date,
+                        contact or "",
+                        instructor_id
+                    ))
+                    conn.commit()
+                    cur.close()
+                    conn.close()
+                    print("Inserted new member successfully.")
+                else:
+                    print("Event location not found for event_id:", event_id)
 
             messages.success(request, "Registration successful!")
+            print("Registration successful!")
         except Exception as e:
+            print("Exception occurred during registration:", str(e))
             messages.error(request, "Something went wrong while saving registration. Please try again.")
         return redirect('public_event_register')
 
-    # GET — preload events
+    print("GET request: Preloading events for form.")
     conn = get_db_conn()
     cur = conn.cursor(dictionary=True)
     cur.execute("SELECT id, event_name FROM event_registrations ORDER BY event_date DESC LIMIT 1")
     events = cur.fetchall()
     cur.close()
     conn.close()
+    print("Events loaded for form:", events)
 
     return render(request, 'public_event_register.html', {'events': events, 'year': 2024})
