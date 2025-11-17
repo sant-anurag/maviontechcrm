@@ -1,39 +1,162 @@
 {% load static %}
 
-  <!DOCTYPE html>
-  <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Login Form</title>
-    <link rel="stylesheet" href="{% static 'css/login.css' %}">
-  </head>
-  <body>
-    <div class="login-container">
-      <div class="login-avatar">
-        <img src="{% static 'images/a.jpg' %}" alt="Logo" />
-      </div>
-      <form class="login-form" method="post" action="{% url 'login' %}">
-        {% csrf_token %}
-        <h3 style="text-align:center; color:#ff867c; font-family:'Inter', Arial, sans-serif; font-weight:500; font-size:1.5rem; letter-spacing:0.5px; margin-bottom:0.5rem; text-shadow:0 1px 4px rgba(229,57,53,0.07);">
-          Vihangam Yoga Pune
-        </h3>
-        <h2>Member Login</h2>
-        {% if message %}
-        <div class="form-alert error" id="login-message">{{ message }}</div>
-        {% endif %}
-
-        <input type="text" id="username" name="username" placeholder="Username" />
-        <input type="password" id="password" name="password" placeholder="Password" />
-        <button type="submit">Login</button>
-        <div class="form-links">
-          <p class="forgot">
-            <a href="{% url 'forgot_password' %}">Forgot Username / Password?</a>
-          </p>
-          <p class="register"><a href="{% url 'register_user' %}">New User? Register</a></p>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>MavionTech CRM — Login</title>
+  <link rel="stylesheet" href="{% static 'css/login.css' %}">
+</head>
+<body>
+  <main class="page">
+    <aside class="promo">
+      <div class="brand">
+        <div class="brand-text">
+          <h1>MavionTech<span class="accent">CRM</span></h1>
+          <p class="tagline">Momentum with Vision — CRM that moves your business forward</p>
         </div>
-      </form>
-    </div>
-    <script src="{% static 'js/login.js' %}"></script>
-  </body>
-  </html>
+      </div>
+
+      <section class="usps" aria-labelledby="usps-heading">
+        <h2 id="usps-heading" class="visually-hidden">Why MavionTech CRM</h2>
+
+        <ul>
+          <li>
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 2a7 7 0 0 1 7 7v5.5a3.5 3.5 0 1 1-7 0V9a1 1 0 0 0-2 0v10.5a5.5 5.5 0 1 0 11 0V9a9 9 0 1 0-18 0v8a7 7 0 0 0 7 7"></path></svg>
+            <div>
+              <strong>360° Customer View</strong>
+              <span>Unified contact, interaction and deal data in one place.</span>
+            </div>
+          </li>
+
+          <li>
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zM3 9h2V7H3v2zm4 8h14v-2H7v2zM7 13h14v-2H7v2zm0-8v2h14V5H7z"></path></svg>
+            <div>
+              <strong>Pipeline & Forecasting</strong>
+              <span>Visualize deals, predict revenue, and take action.</span>
+            </div>
+          </li>
+
+          <li>
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 2l4 4h-3v7h-2V6H8l4-4zM6 10v8h12v-8H6zm2 2h8v4H8v-4z"></path></svg>
+            <div>
+              <strong>Automation & Tasks</strong>
+              <span>Automate follow-ups and assign tasks to keep momentum.</span>
+            </div>
+          </li>
+
+          <li>
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 1L3 5v6c0 5 3.8 9.7 9 11 5.2-1.3 9-6 9-11V5l-9-4z"></path></svg>
+            <div>
+              <strong>Secure & Multi-tenant</strong>
+              <span>Role-based access, audit logs and tenant isolation.</span>
+            </div>
+          </li>
+        </ul>
+      </section>
+
+      <footer class="promo-foot">
+        <small>Trusted by teams — built for scale. <span class="bullet">•</span> GDPR & SOC-ready practices.</small>
+      </footer>
+    </aside>
+
+    <section class="login-panel" aria-labelledby="login-heading">
+      <div class="login-card">
+        <div class="login-head">
+          <div class="avatar">
+            <img src="{% static 'images/logo.png' %}" alt="MavionTech" />
+          </div>
+          <div>
+            <h2 id="login-heading">MavionTech CRM — Sign in</h2>
+            <p class="muted">Enter your corporate code and credentials to access your tenant dashboard</p>
+          </div>
+        </div>
+
+        <form id="loginForm" class="login-form" method="post" action="{% url 'login' %}" autocomplete="on" novalidate>
+          {% csrf_token %}
+
+          {% if message %}
+            <div class="form-alert error" role="alert" id="login-message">{{ message }}</div>
+          {% endif %}
+
+          <!-- CORPORATE CODE (new) -->
+          <label for="corp_code" class="sr-only">Corporate code</label>
+          <input type="text" id="corp_code" name="corp_code" placeholder="Corporate code (e.g., ACME)" required autocomplete="organization">
+
+          <div class="field-hint" id="corp-hint" aria-live="polite">Enter the code provided by your company (case-insensitive).</div>
+
+          <!-- USERNAME -->
+          <label for="username" class="sr-only">Username or Email</label>
+          <input type="text" id="username" name="username" placeholder="Username or email" required autocomplete="username">
+
+          <!-- PASSWORD -->
+          <label for="password" class="sr-only">Password</label>
+          <input type="password" id="password" name="password" placeholder="Password" required autocomplete="current-password">
+
+          <div class="row">
+            <label class="remember">
+              <input type="checkbox" name="remember" value="1" aria-label="Remember me"> Remember me
+            </label>
+            <a class="help-link" href="{% url 'forgot_password' %}">Forgot?</a>
+          </div>
+
+          <button type="submit" class="primary">Sign in</button>
+
+          <div class="alt-actions">
+            <p>New to MavionTech CRM? <a href="{% url 'register_user' %}">Create an account</a></p>
+            <p class="small-muted">By signing in you agree to our <a href="#" class="muted-link">Terms</a> & <a href="#" class="muted-link">Privacy</a>.</p>
+          </div>
+        </form>
+      </div>
+
+      <div class="support">
+        <p>Need help? <a href="#">Contact support</a> or check the <a href="#">docs</a>.</p>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    // Focus corporate code first (tenant-first experience)
+    const corpInput = document.getElementById('corp_code');
+    corpInput?.focus();
+
+    // Hook point: after user blurs the corporate code field you can fetch tenant info
+    corpInput?.addEventListener('blur', async (e) => {
+      const corp = (e.target.value || '').trim();
+      if (!corp) {
+        document.getElementById('corp-hint').textContent = 'Enter the code provided by your company (case-insensitive).';
+        return;
+      }
+
+      // Example: call your tenant lookup endpoint to show friendly name or logo
+      // fetchTenantInfo is a hook — wire it to your backend URL for tenant discovery
+      try {
+        // fetchTenantInfo is intentionally a stub; implement server side endpoint e.g. /api/tenant-info?code=XXX
+        if (typeof fetchTenantInfo === 'function') {
+          const info = await fetchTenantInfo(corp);
+          if (info?.company_name) {
+            document.getElementById('corp-hint').textContent = 'Signing into: ' + info.company_name;
+          }
+        } else {
+          // graceful UI hint when hook not implemented
+          document.getElementById('corp-hint').textContent = 'Corporate code looks good. Proceed with username & password.';
+        }
+      } catch (err) {
+        document.getElementById('corp-hint').textContent = 'Unknown corporate code — check with your admin.';
+      }
+    });
+
+    // simple client-side validation to ensure corp code is sent
+    document.getElementById('loginForm')?.addEventListener('submit', function (ev) {
+      if (!corpInput.value.trim()) {
+        ev.preventDefault();
+        corpInput.focus();
+        document.getElementById('corp-hint').textContent = 'Corporate code is required.';
+      }
+    });
+
+    // NOTE: Implement server-side validation and tenant resolution using `corp_code` (POST param).
+  </script>
+</body>
+</html>
